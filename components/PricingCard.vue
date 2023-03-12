@@ -5,10 +5,9 @@ const { data, signIn } = useSession()
 
 const runtimeConfig = useRuntimeConfig()
 const { plan } = defineProps(['plan'])
-console.log(toRaw(plan))
 
 async function login () {
-  await signIn('github')
+  await signIn()
 }
 
 const showSubscribeButton = computed(
@@ -29,6 +28,15 @@ async function processSubscription (priceId: number) {
     sessionId: stripeSessionData.value.stripeSessions.id
   })
 }
+
+const portalUrl = ref('')
+
+onMounted(async () => {
+  await nextTick(async () => {
+    const { data } = await useFetch('/api/stripe/portal')
+    portalUrl.value = data.value.url
+  })
+})
 </script>
 
 <template>
@@ -86,13 +94,13 @@ async function processSubscription (priceId: number) {
     <button v-else-if="showCreateAccountButton" class="btn" @click="login">
       Create Account
     </button>
-    <NuxtLink
+    <a
       v-else-if="showManageSubscriptionButton"
-      to="/dashboard"
+      :href="portalUrl"
       class="btn"
     >
       Manage Subscription
-    </NuxtLink>
+    </a>
   </div>
 </template>
 

@@ -20,7 +20,7 @@ export default eventHandler(async (event) => {
 
   const stripeSession = await stripe.billingPortal.sessions.create({
     customer: userAccount?.stripe_customer,
-    return_url: 'http://localhost:3000/dashboard'
+    return_url: 'http://localhost:3000/'
   })
 
   return { url: stripeSession.url }
